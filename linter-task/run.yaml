@@ -1,0 +1,60 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: linter-pipeline
+spec:
+  workspaces:
+    - name: shared-workspace
+  tasks:
+    - name: fetch-repository
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: https://github.com/vinamra28/blue-green-deployment-k8s
+        - name: subdirectory
+          value: ""
+        - name: deleteExisting
+          value: "true"
+    - name: run-linter-prettier
+      taskRef:
+        name: linter
+      runAfter:
+        - fetch-repository
+      workspaces:
+        - name: file-workspace
+          workspace: shared-workspace
+      params:
+        - name: linter
+          value: "prettier"
+        - name: filepath
+          value: "./*.yaml"
+    - name: run-linter-yaml
+      taskRef:
+        name: linter
+      runAfter:
+        - fetch-repository
+      workspaces:
+        - name: file-workspace
+          workspace: shared-workspace
+      params:
+        - name: linter
+          value: "yaml"
+        - name: filepath
+          value: "./*.yaml"
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: linter-pipeline-run
+spec:
+  pipelineRef:
+    name: linter-pipeline
+  workspaces:
+    - name: shared-workspace
+      persistentvolumeclaim:
+        claimName: install-dir
