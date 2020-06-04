@@ -26,9 +26,12 @@ kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/v1beta1/lint
 
 ## Usage
 
-This task uses (git-clone)[https://github.com/tektoncd/catalog/blob/v1beta1/git/git-clone.yaml] task in the pipeline to clone the `git repository` in the workspace. 
+This task uses [git-clone](https://github.com/tektoncd/catalog/blob/v1beta1/git/git-clone.yaml) task in the pipeline to clone the `git repository` in the workspace. 
 In the task, we need to the provide the param `linter` which specifies the linter that needs to be applied in the cloned repository. Param `filepath` to provide the path of the files on which linter has to be applied. 
 
 After we run the pipeline, we will get the logs for the linter performed that may include (depending on the type of linter used) suggestions to fix the lint issue. 
+
+This [pipeline](../linter/example/run.yaml) can be referred to create a pipeline.
+
 
 **NOTE**: Pipeline will go into `failed` state if the linter check fails. 
